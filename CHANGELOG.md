@@ -2,6 +2,8 @@
 
 ## v0.7.0 - TBD
 
++ **Deferred default domain-controller discovery** — Windows `DsGetDcName` and Unix/macOS krb5+SRV lookup no longer run in `OnImport()`; they run on first `New-OpenADSession` without `-Server`. Fixes multi-second module import when OS DNS cannot reach `_ldap._tcp.dc._msdcs.*` SRV records (VPN/off-site).
++ Optional **`PSOPENAD_DNS_SERVERS`** environment variable (comma-separated IPs) for Unix/macOS SRV lookup when system DNS is wrong but corp resolvers are known.
 + Added `Add-OpenADGroupMember` and `Remove-OpenADGroupMember` to manage AD group members
 + Fixed `Get-OpenADGroupMember` raising an error when the group exists but contains no members, instead it just outputs nothing
 + Fixed parsing errors for `-LDAPFilter` to properly include the parsing error location due to changes in the PowerShell error formatter

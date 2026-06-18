@@ -58,5 +58,11 @@ internal class GlobalState
     /// <summary>If the default DC couldn't be detected this stores the details.</summary>
     public string? DefaultDCError;
 
+    /// <summary>True after lazy default-DC discovery has run (see DefaultDcDiscovery).</summary>
+    public bool DefaultDcDiscoveryAttempted;
+
+    /// <summary>Per-runspace lock for lazy default-DC discovery.</summary>
+    public object DefaultDcDiscoveryLock = new();
+
     public static GlobalState GetFromTLS() => _state.GetFromTLS();
 }
