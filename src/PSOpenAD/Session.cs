@@ -31,6 +31,12 @@ public sealed class OpenADSessionOptions
 
     /// <summary>Used for TLS client certificate authentication.</summary>
     public X509Certificate? ClientCertificate { get; set; }
+
+    /// <summary>[STMC fork] Overrides the hostname used to build the Kerberos/Negotiate SPN
+    /// (ldap@&lt;host&gt; / ldap/&lt;host&gt;) while the TCP connection still targets -ComputerName.
+    /// Lets you connect by IP but authenticate against the DC's registered SPN when the FQDN
+    /// isn't resolvable from the client. Null/empty = use the connection host (default behaviour).</summary>
+    public string? TargetSpnHost { get; set; }
 }
 
 /// <summary>The OpenADSession class used to encapsulate a session with the caller.</summary>

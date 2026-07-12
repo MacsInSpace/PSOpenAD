@@ -416,15 +416,19 @@ internal sealed class OpenADSessionFactory
             }
 
             SecurityContext context;
+            // [STMC fork] SPN host defaults to the connection host, but -TargetSpnHost overrides it so we can
+            // connect the socket by IP yet request the DC's registered ldap/<fqdn> ticket (FQDN unresolvable).
+            string spnHost = string.IsNullOrWhiteSpace(sessionOptions.TargetSpnHost)
+                ? uri.DnsSafeHost : sessionOptions.TargetSpnHost!;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                string targetSpn = $"ldap/{uri.DnsSafeHost}";
+                string targetSpn = $"ldap/{spnHost}";
                 context = new SspiContext(username, password, auth, targetSpn, channelBindings, signed,
                     encrypted);
             }
             else
             {
-                string targetSpn = $"ldap@{uri.DnsSafeHost}";
+                string targetSpn = $"ldap@{spnHost}";
                 context = new GssapiContext(username, password, auth, targetSpn, channelBindings, signed,
                     encrypted);
             }

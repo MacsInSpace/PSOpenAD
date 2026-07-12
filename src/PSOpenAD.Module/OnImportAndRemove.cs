@@ -82,6 +82,17 @@ public class OnModuleImportAndRemove : IModuleAssemblyInitializer, IModuleAssemb
 
     internal NativeResolver? Resolver;
 
+    // [STMC fork] Prepend an env-var library override to the built-in candidate list, if set.
+    private static string[] WithLibOverride(string envVar, string[] defaults)
+    {
+        string? o = Environment.GetEnvironmentVariable(envVar);
+        if (string.IsNullOrWhiteSpace(o))
+            return defaults;
+        List<string> list = new() { o };
+        list.AddRange(defaults);
+        return list.ToArray();
+    }
+
     public void OnImport()
     {
         Resolver = new NativeResolver();
@@ -112,16 +123,19 @@ public class OnModuleImportAndRemove : IModuleAssemblyInitializer, IModuleAssemb
         else
         {
             state.GssapiProvider = GssapiProvider.None;
-            LibraryInfo? gssapiLib = Resolver.CacheLibrary(GSSAPI.LIB_GSSAPI, new[] {
+            // [STMC fork] PSOPENAD_GSSAPI_LIB / PSOPENAD_KRB5_LIB force a specific library (tried first) — e.g.
+            // MIT krb5 on macOS instead of the ancient system Apple Heimdal (broken gss_acquire_cred_with_password,
+            // ignores KRB5_CONFIG). Built-in candidates remain as fallback; also added the .dylib MIT names.
+            LibraryInfo? gssapiLib = Resolver.CacheLibrary(GSSAPI.LIB_GSSAPI, WithLibOverride("PSOPENAD_GSSAPI_LIB", new[] {
                 MACOS_GSS_FRAMEWORK, // macOS GSS Framework (technically Heimdal)
-                "libgssapi_krb5.so.2", // MIT krb5
+                "libgssapi_krb5.so.2", "libgssapi_krb5.dylib", // MIT krb5
                 "libgssapi.so.3", "libgssapi.so", // Heimdal
-            });
-            _ = Resolver.CacheLibrary(Kerberos.LIB_KRB5, new[] {
+            }));
+            _ = Resolver.CacheLibrary(Kerberos.LIB_KRB5, WithLibOverride("PSOPENAD_KRB5_LIB", new[] {
                 "/System/Library/PrivateFrameworks/Heimdal.framework/Heimdal", // macOS Heimdal Framework
-                "libkrb5.so.3", // MIT krb5
+                "libkrb5.so.3", "libkrb5.dylib", // MIT krb5
                 "libkrb5.so.26", "libkrb5.so", // Heimdal
-            });
+            }));
 
             if (gssapiLib == null)
             {
