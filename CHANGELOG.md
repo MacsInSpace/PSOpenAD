@@ -2,6 +2,8 @@
 
 ## v0.8.0 - TBD
 
++ Added `Restore-OpenADObject` to restore an object from the Active Directory Recycle Bin
+
 ## v0.7.0 - 2026-08-27
 
 + Added `Add-OpenADGroupMember` and `Remove-OpenADGroupMember` to manage AD group members
