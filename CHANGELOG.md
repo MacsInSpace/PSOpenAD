@@ -10,6 +10,7 @@
   + PowerShell 7.7+ is required to see the column offsets in the line, but previous versions will still see a slightly less verbose error message
 + Remove length check for `sAMAccountName` when used in the `-Identity` parameter
 + Fix the search base and scope when using `Get-OpenAD*` with the `-Identity` parameter, it should now be possible to find objects not in the `defaultNamingContext`
++ Fixed `Get-OpenADRootDSE` and session setup failing with `-AuthType Anonymous` against Active Directory - the paged result control is no longer sent on `Base` scope searches, where it cannot apply and which AD rejects on an anonymous connection
 
 ## v0.6.0 - 2025-03-12
 

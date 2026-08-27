@@ -194,12 +194,25 @@ internal static class Operations
         byte[]? paginationCookie = null;
         bool request = true;
 
+        // A Base scope search returns at most one entry, so the paged result
+        // control can never do anything useful there. It is also actively
+        // harmful: Active Directory rejects the control on an anonymous
+        // connection with "In order to perform this operation a successful bind
+        // must be completed on the connection" (operationsError), even though
+        // the same search without controls is allowed. That made every
+        // anonymous RootDSE read fail, i.e. -AuthType Anonymous was unusable
+        // against a default AD DC.
+        bool usePagination = scope != SearchScope.Base;
+
         while (true)
         {
             if (request)
             {
                 List<LDAPControl> copiedControls = controls?.ToList() ?? new();
-                copiedControls.Add(new PagedResultControl(false, paginationLimit, paginationCookie));
+                if (usePagination)
+                {
+                    copiedControls.Add(new PagedResultControl(false, paginationLimit, paginationCookie));
+                }
                 searchId = connection.Session.Search(searchBase, scope, DereferencingPolicy.Never, sizeLimit,
                     timeLimit / 1000, false, filter, attributes, copiedControls);
 
