@@ -2,6 +2,8 @@
 
 ## v0.8.0 - TBD
 
++ The default domain controller lookup (`DsGetDcName` on Windows, the krb5 default realm and its `_ldap._tcp.dc._msdcs` SRV records elsewhere) is now done the first time a cmdlet is run without `-Server` or `-Session` rather than when the module is imported, so `Import-Module` no longer waits on DNS when those records are unreachable
+
 ## v0.7.0 - 2026-08-27
 
 + Added `Add-OpenADGroupMember` and `Remove-OpenADGroupMember` to manage AD group members
