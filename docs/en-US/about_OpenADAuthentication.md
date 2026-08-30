@@ -157,3 +157,20 @@ The minimum requires are:
 + The time on the client is within 5 minutes of the domain controller configured
 
 + The `/etc/krb5.conf` may be required if DNS is unable to resolve the SRV query `_ldap._tcp.dc._msdcs.domain.com`
+
+## SELECTING THE GSSAPI LIBRARY
+On Linux and macOS PSOpenAD loads the system GSSAPI and Kerberos libraries when the module is imported.
+On macOS this is the built in GSS framework, which is a build of Heimdal.
+To use a different build instead, for example MIT Kerberos installed through Homebrew, set these environment variables before importing the module to the full path of the library to load:
+
++ `PSOPENAD_LIBGSSAPI` - the GSSAPI library, `gss_*` functions
+
++ `PSOPENAD_LIBKRB5` - the Kerberos library, `krb5_*` functions
+
+```powershell
+$env:PSOPENAD_LIBGSSAPI = '/opt/homebrew/opt/krb5/lib/libgssapi_krb5.dylib'
+$env:PSOPENAD_LIBKRB5 = '/opt/homebrew/opt/krb5/lib/libkrb5.dylib'
+Import-Module PSOpenAD
+```
+
+When one of these is set that path is used instead of the built in candidates, so the path must exist and be loadable or the corresponding library will be unavailable.

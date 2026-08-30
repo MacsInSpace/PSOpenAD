@@ -2,6 +2,8 @@
 
 ## v0.8.0 - TBD
 
++ Added the macOS MIT Kerberos library names (`libgssapi_krb5.dylib`, `libkrb5.dylib`) to the built-in GSSAPI/Kerberos library search, and documented the `PSOPENAD_LIBGSSAPI` and `PSOPENAD_LIBKRB5` environment variables that override which library is loaded
+
 ## v0.7.0 - 2026-08-27
 
 + Added `Add-OpenADGroupMember` and `Remove-OpenADGroupMember` to manage AD group members
