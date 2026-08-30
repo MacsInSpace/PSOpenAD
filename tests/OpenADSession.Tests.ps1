@@ -475,3 +475,16 @@ Describe "PSSession management" -Skip:(-not $PSOpenADSettings.Server) {
         } | Should -Throw -ExpectedMessage "Cannot perform a SearchRequest until the connection is opened"
     }
 }
+
+Describe "New-OpenADSessionOption" {
+    It "Sets TargetSpnHost" {
+        $actual = New-OpenADSessionOption -TargetSpnHost dc01.example.com
+        $actual -is ([PSOpenAD.OpenADSessionOptions]) | Should -BeTrue
+        $actual.TargetSpnHost | Should -Be 'dc01.example.com'
+    }
+
+    It "Leaves TargetSpnHost unset by default" {
+        $actual = New-OpenADSessionOption
+        $actual.TargetSpnHost | Should -BeNullOrEmpty
+    }
+}
