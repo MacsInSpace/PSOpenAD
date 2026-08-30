@@ -1,6 +1,8 @@
 # Changelog for PSOpenAD
 
-## v0.7.0 - TBD
+## v0.8.0 - TBD
+
+## v0.7.0 - 2026-08-27
 
 + **Deferred default domain-controller discovery** — Windows `DsGetDcName` and Unix/macOS krb5+SRV lookup no longer run in `OnImport()`; they run on first `New-OpenADSession` without `-Server`. Fixes multi-second module import when OS DNS cannot reach `_ldap._tcp.dc._msdcs.*` SRV records (VPN/off-site).
 + Optional **`PSOPENAD_DNS_SERVERS`** environment variable (comma-separated IPs) for Unix/macOS SRV lookup when system DNS is wrong but corp resolvers are known.
